@@ -1,0 +1,58 @@
+package go_whatsapp_official
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+)
+
+type Status struct {
+	MessageId string `json:"message_id"`
+	api       *API
+}
+
+func (api *API) NewStatus(mId string) *Status {
+	return &Status{api: api, MessageId: mId}
+}
+
+func (obj *Status) MakeQr(phoneId, message, format string) (*StatusResponse, error) {
+
+	endpoint := fmt.Sprintf("/%s/message_qrdls", phoneId)
+
+	body := map[string]string{}
+	body["status"] = "read"
+	body["messaging_product"] = "whatsapp"
+	body["message_id"] = obj.MessageId
+
+	buf := &bytes.Buffer{}
+	err := json.NewEncoder(buf).Encode(body)
+
+	if err != nil {
+		return nil, err
+	}
+
+	res, status, err := obj.api.request(endpoint, "POST", nil, buf)
+	if err != nil {
+
+		return nil, err
+	}
+
+	if status != 200 {
+		e := ErrorResponse{}
+		err = json.NewDecoder(res).Decode(&e)
+		return nil, &e
+	}
+
+	r := map[string]interface{}{}
+	err = json.NewDecoder(res).Decode(&r)
+
+	var response StatusResponse
+	jsonString, _ := json.Marshal(r)
+	json.Unmarshal(jsonString, &response)
+	return &response, nil
+
+}
+
+type StatusResponse struct {
+	Success bool `json:"success"`
+}
