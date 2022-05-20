@@ -1,4 +1,4 @@
-package go_whatsapp_official
+package whatsapp
 
 type TextBasedTemplate struct {
 	Name       string          `json:"name"`

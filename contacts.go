@@ -1,4 +1,4 @@
-package go_whatsapp_official
+package whatsapp
 
 type ContactsReq struct {
 	Contacts []Contacts `json:"contacts"`

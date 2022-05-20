@@ -1,4 +1,4 @@
-package go_whatsapp_official
+package whatsapp
 
 type Text struct {
 	Body       string `json:"body"`

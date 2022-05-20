@@ -1,4 +1,4 @@
-package go_whatsapp_official
+package whatsapp
 
 const (
 	InteractiveTypeList = "list"
