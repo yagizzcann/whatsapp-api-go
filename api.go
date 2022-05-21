@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 var (
@@ -47,10 +48,12 @@ func (api *API) request(endpoint string, method string, params map[string]interf
 
 	if params != nil {
 		uri = fmt.Sprintf("%s?", uri)
+		query := url.Values{}
 
 		for k, v := range params {
-			uri = fmt.Sprintf("%s&%s=%s", uri, k, v)
+			query.Add(k, v.(string))
 		}
+		uri = uri + query.Encode()
 	}
 	req, err := http.NewRequest(method, uri, body)
 	if err != nil {
