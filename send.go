@@ -96,7 +96,7 @@ func (api *API) send(phoneId, to, _type string, obj interface{}) (*map[string]in
 		return nil, err
 	}
 
-	if status > 400 {
+	if status >= 400 {
 		e := ErrorResponse{}
 		err = json.NewDecoder(res).Decode(&e)
 		return nil, &e
