@@ -59,6 +59,7 @@ func (obj *Media) Send(phoneId, to string) (*MessageResponse, error) {
 
 func (obj *Text) Send(phoneId, to string) (*MessageResponse, error) {
 	r, err := obj.api.send(phoneId, to, "text", obj)
+
 	var res MessageResponse
 	jsonString, _ := json.Marshal(r)
 	json.Unmarshal(jsonString, &res)
@@ -91,12 +92,11 @@ func (api *API) send(phoneId, to, _type string, obj interface{}) (*map[string]in
 	}
 
 	res, status, err := api.request(endpoint, "POST", nil, buf)
-
 	if err != nil {
 		return nil, err
 	}
 
-	if status != 200 || status != 201 || status > 300 {
+	if status > 400 {
 		e := ErrorResponse{}
 		err = json.NewDecoder(res).Decode(&e)
 		return nil, &e
@@ -104,7 +104,6 @@ func (api *API) send(phoneId, to, _type string, obj interface{}) (*map[string]in
 
 	r := map[string]interface{}{}
 	err = json.NewDecoder(res).Decode(&r)
-
 	fmt.Printf("things are: %v\n\n", r)
 
 	return &r, nil

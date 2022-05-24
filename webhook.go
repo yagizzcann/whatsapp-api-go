@@ -324,7 +324,7 @@ type AddressReceived struct {
 	} `json:"entry"`
 }
 
-type ContractReceived struct {
+type ContactReceived struct {
 	Object string `json:"object"`
 	Entry  []struct {
 		ID      string `json:"id"`
