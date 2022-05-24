@@ -40,47 +40,6 @@ func (api *API) NewMultiBasedTemplate() *MultiBasedTemplate {
 	return &MultiBasedTemplate{api: api, Type: "template"}
 }
 
-func (obj *Media) Send(phoneId, to string) (*MessageResponse, error) {
-
-	var rObj interface{}
-	if obj.IsItAnID {
-		rObj = obj.ToId()
-	} else {
-		rObj = obj.ToLink()
-	}
-
-	r, err := obj.api.send(phoneId, to, obj.Type, rObj)
-	if err != nil {
-		return nil, err
-	}
-	var res MessageResponse
-	jsonString, _ := json.Marshal(r)
-	err = json.Unmarshal(jsonString, &res)
-	return &res, err
-}
-
-func (obj *Text) Send(phoneId, to string) (*MessageResponse, error) {
-	r, err := obj.api.send(phoneId, to, "text", obj)
-	if err != nil {
-		return nil, err
-	}
-	var res MessageResponse
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &res)
-	return &res, err
-}
-
-func (obj *Location) Send(phoneId, to string) (*MessageResponse, error) {
-	r, err := obj.api.send(phoneId, to, "text", obj)
-	if err != nil {
-		return nil, err
-	}
-	var res MessageResponse
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &res)
-	return &res, err
-}
-
 func (api *API) send(phoneId, to, _type string, obj interface{}) (*MessageResponse, error) {
 	endpoint := fmt.Sprintf("/%s/messages", phoneId)
 
@@ -111,6 +70,39 @@ func (api *API) send(phoneId, to, _type string, obj interface{}) (*MessageRespon
 	return &r, nil
 }
 
+func (obj *Media) Send(phoneId, to string) (*MessageResponse, error) {
+
+	var rObj interface{}
+	if obj.IsItAnID {
+		rObj = obj.ToId()
+	} else {
+		rObj = obj.ToLink()
+	}
+
+	r, err := obj.api.send(phoneId, to, obj.Type, rObj)
+	if err != nil {
+		return nil, err
+	}
+
+	return r, err
+}
+
+func (obj *Text) Send(phoneId, to string) (*MessageResponse, error) {
+	r, err := obj.api.send(phoneId, to, "text", obj)
+	if err != nil {
+		return nil, err
+	}
+	return r, err
+}
+
+func (obj *Location) Send(phoneId, to string) (*MessageResponse, error) {
+	r, err := obj.api.send(phoneId, to, "location", obj)
+	if err != nil {
+		return nil, err
+	}
+	return r, err
+}
+
 func (obj *ContactsReq) Send(phoneId, to string) (*MessageResponse, error) {
 	r, err := obj.api.send(phoneId, to, "contacts", obj)
 	if err != nil {
@@ -120,7 +112,7 @@ func (obj *ContactsReq) Send(phoneId, to string) (*MessageResponse, error) {
 }
 
 func (obj *Interactive) Send(phoneId, to string) (*MessageResponse, error) {
-	r, err := obj.api.send(phoneId, to, "contacts", obj)
+	r, err := obj.api.send(phoneId, to, "interactive", obj)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +120,7 @@ func (obj *Interactive) Send(phoneId, to string) (*MessageResponse, error) {
 }
 
 func (obj *InteractiveBtnReq) Send(phoneId, to string) (*MessageResponse, error) {
-	r, err := obj.api.send(phoneId, to, "contacts", obj)
+	r, err := obj.api.send(phoneId, to, "interactive", obj)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +128,7 @@ func (obj *InteractiveBtnReq) Send(phoneId, to string) (*MessageResponse, error)
 }
 
 func (obj *TextBasedTemplate) Send(phoneId, to string) (*MessageResponse, error) {
-	r, err := obj.api.send(phoneId, to, "contacts", obj)
+	r, err := obj.api.send(phoneId, to, "template", obj)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +136,7 @@ func (obj *TextBasedTemplate) Send(phoneId, to string) (*MessageResponse, error)
 }
 
 func (obj *MultiBasedTemplate) Send(phoneId, to string) (*MessageResponse, error) {
-	r, err := obj.api.send(phoneId, to, "contacts", obj)
+	r, err := obj.api.send(phoneId, to, "template", obj)
 	if err != nil {
 		return nil, err
 	}
