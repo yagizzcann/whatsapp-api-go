@@ -1,7 +1,6 @@
 package whatsapp
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -51,6 +50,9 @@ func (obj *Media) Send(phoneId, to string) (*MessageResponse, error) {
 	}
 
 	r, err := obj.api.send(phoneId, to, obj.Type, rObj)
+	if err != nil {
+		return nil, err
+	}
 	var res MessageResponse
 	jsonString, _ := json.Marshal(r)
 	err = json.Unmarshal(jsonString, &res)
@@ -59,7 +61,9 @@ func (obj *Media) Send(phoneId, to string) (*MessageResponse, error) {
 
 func (obj *Text) Send(phoneId, to string) (*MessageResponse, error) {
 	r, err := obj.api.send(phoneId, to, "text", obj)
-
+	if err != nil {
+		return nil, err
+	}
 	var res MessageResponse
 	jsonString, _ := json.Marshal(r)
 	json.Unmarshal(jsonString, &res)
@@ -68,13 +72,16 @@ func (obj *Text) Send(phoneId, to string) (*MessageResponse, error) {
 
 func (obj *Location) Send(phoneId, to string) (*MessageResponse, error) {
 	r, err := obj.api.send(phoneId, to, "text", obj)
+	if err != nil {
+		return nil, err
+	}
 	var res MessageResponse
 	jsonString, _ := json.Marshal(r)
 	json.Unmarshal(jsonString, &res)
 	return &res, err
 }
 
-func (api *API) send(phoneId, to, _type string, obj interface{}) (*map[string]interface{}, error) {
+func (api *API) send(phoneId, to, _type string, obj interface{}) (*MessageResponse, error) {
 	endpoint := fmt.Sprintf("/%s/messages", phoneId)
 
 	body := map[string]interface{}{}
@@ -84,26 +91,21 @@ func (api *API) send(phoneId, to, _type string, obj interface{}) (*map[string]in
 	body["recipient_type"] = "individual"
 	body["to"] = to
 
-	buf := &bytes.Buffer{}
-	err := json.NewEncoder(buf).Encode(body)
-
-	if err != nil {
-		return nil, err
-	}
-
-	res, status, err := api.request(endpoint, "POST", nil, buf)
+	res, status, err := api.request(endpoint, "POST", nil, body)
 	if err != nil {
 		return nil, err
 	}
 
 	if status >= 400 {
 		e := ErrorResponse{}
-		err = json.NewDecoder(res).Decode(&e)
+		json.Unmarshal(res, &e)
+		fmt.Printf("things err are: %v\n\n", e)
 		return nil, &e
 	}
 
-	r := map[string]interface{}{}
-	err = json.NewDecoder(res).Decode(&r)
+	r := MessageResponse{}
+	json.Unmarshal(res, &r)
+
 	fmt.Printf("things are: %v\n\n", r)
 
 	return &r, nil
@@ -111,42 +113,42 @@ func (api *API) send(phoneId, to, _type string, obj interface{}) (*map[string]in
 
 func (obj *ContactsReq) Send(phoneId, to string) (*MessageResponse, error) {
 	r, err := obj.api.send(phoneId, to, "contacts", obj)
-	var res MessageResponse
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &res)
-	return &res, err
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
 }
 
 func (obj *Interactive) Send(phoneId, to string) (*MessageResponse, error) {
 	r, err := obj.api.send(phoneId, to, "contacts", obj)
-	var res MessageResponse
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &res)
-	return &res, err
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
 }
 
 func (obj *InteractiveBtnReq) Send(phoneId, to string) (*MessageResponse, error) {
 	r, err := obj.api.send(phoneId, to, "contacts", obj)
-	var res MessageResponse
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &res)
-	return &res, err
+	if err != nil {
+		return nil, err
+	}
+	return r, err
 }
 
 func (obj *TextBasedTemplate) Send(phoneId, to string) (*MessageResponse, error) {
 	r, err := obj.api.send(phoneId, to, "contacts", obj)
-	var res MessageResponse
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &res)
-	return &res, err
+	if err != nil {
+		return nil, err
+	}
+	return r, err
 }
 
 func (obj *MultiBasedTemplate) Send(phoneId, to string) (*MessageResponse, error) {
 	r, err := obj.api.send(phoneId, to, "contacts", obj)
-	var res MessageResponse
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &res)
-	return &res, err
+	if err != nil {
+		return nil, err
+	}
+	return r, err
 }
 
 type MessageResponse struct {
@@ -156,6 +158,6 @@ type MessageResponse struct {
 		WaId  string `json:"wa_id"`
 	} `json:"contacts"`
 	Messages []struct {
-		Id bool `json:"id"`
+		Id string `json:"id"`
 	} `json:"messages"`
 }

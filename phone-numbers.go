@@ -20,16 +20,12 @@ func (api *API) ListPhoneNumbers(businessAccountId string) (*ListPhoneResponse, 
 
 	if status != 200 {
 		e := ErrorResponse{}
-		err = json.NewDecoder(res).Decode(&e)
+		json.Unmarshal(res, &e)
 		return nil, &e
 	}
 
-	r := map[string]interface{}{}
-	err = json.NewDecoder(res).Decode(&r)
-
 	var response ListPhoneResponse
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &response)
+	json.Unmarshal(res, &response)
 	return &response, nil
 
 }
@@ -49,16 +45,12 @@ func (api *API) SinglePhoneNumber(phoneId string) (*PhoneNumber, error) {
 
 	if status != 200 {
 		e := ErrorResponse{}
-		err = json.NewDecoder(res).Decode(&e)
+		json.Unmarshal(res, &e)
 		return nil, &e
 	}
 
-	r := map[string]interface{}{}
-	err = json.NewDecoder(res).Decode(&r)
-
 	var response PhoneNumber
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &response)
+	json.Unmarshal(res, &response)
 	return &response, nil
 
 }

@@ -22,16 +22,12 @@ func (api *API) CreateQr(phoneId, message, format string) (*Qr, error) {
 
 	if status != 200 {
 		e := ErrorResponse{}
-		err = json.NewDecoder(res).Decode(&e)
+		json.Unmarshal(res, &e)
 		return nil, &e
 	}
 
-	r := map[string]interface{}{}
-	err = json.NewDecoder(res).Decode(&r)
-
 	var response Qr
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &response)
+	json.Unmarshal(res, &response)
 	return &response, nil
 
 }
@@ -51,16 +47,12 @@ func (api *API) ListQr(phoneId string) (*ListQrResponse, error) {
 
 	if status != 200 {
 		e := ErrorResponse{}
-		err = json.NewDecoder(res).Decode(&e)
+		json.Unmarshal(res, &e)
 		return nil, &e
 	}
 
-	r := map[string]interface{}{}
-	err = json.NewDecoder(res).Decode(&r)
-
 	var response ListQrResponse
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &response)
+	json.Unmarshal(res, &response)
 	return &response, nil
 
 }
@@ -80,16 +72,12 @@ func (api *API) GetQr(phoneId, qrId string) (*GetQrResponse, error) {
 
 	if status != 200 {
 		e := ErrorResponse{}
-		err = json.NewDecoder(res).Decode(&e)
+		json.Unmarshal(res, &e)
 		return nil, &e
 	}
 
-	r := map[string]interface{}{}
-	err = json.NewDecoder(res).Decode(&r)
-
 	var response GetQrResponse
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &response)
+	json.Unmarshal(res, &response)
 	return &response, nil
 
 }
@@ -110,16 +98,12 @@ func (api *API) UpdateQr(phoneId, qrId, prefilledMessage string) (*Qr, error) {
 
 	if status != 200 {
 		e := ErrorResponse{}
-		err = json.NewDecoder(res).Decode(&e)
+		json.Unmarshal(res, &e)
 		return nil, &e
 	}
 
-	r := map[string]interface{}{}
-	err = json.NewDecoder(res).Decode(&r)
-
 	var response Qr
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &response)
+	json.Unmarshal(res, &response)
 	return &response, nil
 
 }
@@ -139,16 +123,12 @@ func (api *API) DeleteQr(phoneId, qrId string) (*SuccessResponse, error) {
 
 	if status != 200 {
 		e := ErrorResponse{}
-		err = json.NewDecoder(res).Decode(&e)
+		json.Unmarshal(res, &e)
 		return nil, &e
 	}
 
-	r := map[string]interface{}{}
-	err = json.NewDecoder(res).Decode(&r)
-
 	var response SuccessResponse
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &response)
+	json.Unmarshal(res, &response)
 	return &response, nil
 
 }

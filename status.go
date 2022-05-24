@@ -1,7 +1,6 @@
 package whatsapp
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -19,19 +18,12 @@ func (obj *Status) MakeQr(phoneId, message, format string) (*StatusResponse, err
 
 	endpoint := fmt.Sprintf("/%s/message_qrdls", phoneId)
 
-	body := map[string]string{}
+	body := make(map[string]interface{})
 	body["status"] = "read"
 	body["messaging_product"] = "whatsapp"
 	body["message_id"] = obj.MessageId
 
-	buf := &bytes.Buffer{}
-	err := json.NewEncoder(buf).Encode(body)
-
-	if err != nil {
-		return nil, err
-	}
-
-	res, status, err := obj.api.request(endpoint, "POST", nil, buf)
+	res, status, err := obj.api.request(endpoint, "POST", nil, body)
 	if err != nil {
 
 		return nil, err
@@ -39,16 +31,12 @@ func (obj *Status) MakeQr(phoneId, message, format string) (*StatusResponse, err
 
 	if status != 200 {
 		e := ErrorResponse{}
-		err = json.NewDecoder(res).Decode(&e)
+		json.Unmarshal(res, &e)
 		return nil, &e
 	}
 
-	r := map[string]interface{}{}
-	err = json.NewDecoder(res).Decode(&r)
-
 	var response StatusResponse
-	jsonString, _ := json.Marshal(r)
-	json.Unmarshal(jsonString, &response)
+	json.Unmarshal(res, &response)
 	return &response, nil
 
 }

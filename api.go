@@ -2,8 +2,9 @@ package whatsapp
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 )
@@ -36,10 +37,10 @@ type ErrorResponse struct {
 }
 
 func (e *ErrorResponse) Error() string {
-	return e.Data.ErrorData.Details
+	return e.Data.Message
 }
 
-func (api *API) request(endpoint string, method string, params map[string]interface{}, body io.Reader) (result *bytes.Buffer, status int, err error) {
+func (api *API) request(endpoint string, method string, params map[string]interface{}, body map[string]interface{}) (result []byte, status int, err error) {
 	if api.client == nil {
 		api.client = &http.Client{}
 	}
@@ -55,7 +56,11 @@ func (api *API) request(endpoint string, method string, params map[string]interf
 		}
 		uri = uri + query.Encode()
 	}
-	req, err := http.NewRequest(method, uri, body)
+	var reqBody []byte
+	if body != nil {
+		reqBody, err = json.Marshal(body)
+	}
+	req, err := http.NewRequest(method, uri, bytes.NewBuffer(reqBody))
 	if err != nil {
 		return
 	}
@@ -64,17 +69,16 @@ func (api *API) request(endpoint string, method string, params map[string]interf
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", api.Token))
 
 	resp, err := api.client.Do(req)
-
+	if resp.Body != nil {
+		defer resp.Body.Close()
+	}
 	if err != nil {
 		return
 	}
-
-	status = resp.StatusCode
-
-	result = &bytes.Buffer{}
-	if _, err = io.Copy(result, resp.Body); err != nil {
+	result, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
 		return
 	}
-
+	status = resp.StatusCode
 	return
 }
