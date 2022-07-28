@@ -10,7 +10,7 @@ type Interactive struct {
 	Body   Body       `json:"body"`
 	Footer Footer     `json:"footer"`
 	Action Action     `json:"action"`
-	Type   string     `json:"-"`
+	Type   string     `json:"type"`
 	api    *API
 }
 
@@ -21,7 +21,7 @@ type InteractiveBtnReq struct {
 	Action struct {
 		Buttons []Button `json:"buttons"`
 	} `json:"action"`
-	Type string `json:"-"`
+	Type string `json:"type"`
 	api  *API
 }
 

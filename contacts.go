@@ -2,7 +2,7 @@ package whatsapp
 
 type ContactsReq struct {
 	Contacts []Contacts `json:"contacts"`
-	Type     string     `json:"-"`
+	Type     string     `json:"type"`
 	api      *API
 }
 type Contacts struct {
