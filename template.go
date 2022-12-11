@@ -4,14 +4,14 @@ type TextBasedTemplate struct {
 	Name       string          `json:"name"`
 	Language   Language        `json:"language"`
 	Components []ComponentText `json:"components"`
-	Type       string          `json:"-"`
+	Type       string          `json:"type"`
 	api        *API
 }
 type MultiBasedTemplate struct {
 	Name       string           `json:"name"`
 	Language   Language         `json:"language"`
 	Components []ComponentMedia `json:"components"`
-	Type       string           `json:"-"`
+	Type       string           `json:"type"`
 	api        *API
 }
 type Language struct {
